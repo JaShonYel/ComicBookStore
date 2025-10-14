@@ -76,33 +76,17 @@ export function sanitizeDescription(raw?: string | null, opts: SanitizeOptions =
   } = opts;
 
   let s = String(raw);
-
-  // 1️⃣ Preserve line breaks
   s = preserveLineBreaks(s);
-
-  // 2️⃣ Sanitize HTML & decode entities using DOMPurify
   s = purify.sanitize(s, { ALLOWED_TAGS: [], ALLOWED_ATTR: [] });
-
-  // 3️⃣ Remove artifact groups
   s = removeArtifactGroups(s);
-
-  // 4️⃣ Collapse whitespace
   s = collapseWhitespace(s);
-
-  // 5️⃣ Redact blacklisted words if any
   if (blacklist.length) s = redactBlacklist(s, blacklist, redactWith);
-
-  // 6️⃣ Remove stray angle brackets left from poor markup
   s = s.replace(/>{2,}/g, "");
   s = s.replace(/<{2,}/g, "");
   s = s.replace(/(^|\s)>+\s?/g, " ");
   s = s.replace(/\s?<+($|\s)/g, " ");
   s = collapseWhitespace(s);
-
-  // 7️⃣ Apply character whitelist
   s = whitelistText(s, allowedChars);
-
-  // 8️⃣ Collapse whitespace again and truncate
   s = collapseWhitespace(s);
   s = truncate(s, maxLength);
 
