@@ -1,0 +1,301 @@
+.home-background {
+  min-height: 100vh;
+  background: linear-gradient(180deg, #9bfff8, #272828);
+  font-family: 'Impact', 'Comic Sans MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-grow-1 {
+  flex: 1;
+}
+
+.marvel-navbar {
+  background: linear-gradient(90deg, #0072b2, #000000);
+  box-shadow: 0 6px 0 #000;
+  border-bottom: 4px solid #000;
+  font-family: 'Impact', 'Comic Sans MS', sans-serif;
+  text-transform: uppercase;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.navbar-brand {
+  color: #fff;
+  font-size: 2rem;
+  font-weight: 900;
+  text-shadow: 2px 2px #000;
+}
+
+.nav-link {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: #fff !important;
+  text-shadow: 2px 2px #000;
+  margin-right: 1rem;
+}
+
+.nav-link:focus, .form-control:focus, button:focus {
+  outline: 3px solid #000;
+  outline-offset: 2px;
+}
+
+.marvel-section-title {
+  font-size: 2.5rem;
+  text-align: center;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  font-weight: bold;
+  color: #fff;
+  text-shadow: 3px 3px #000;
+}
+
+.comic-row-scroll {
+  display: flex;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  scroll-behavior: smooth;
+}
+
+.comic-row-scroll::-webkit-scrollbar {
+  height: 10px;
+}
+
+.comic-row-scroll::-webkit-scrollbar-thumb {
+  background-color: rgba(0,0,0,0.5);
+  border-radius: 5px;
+}
+
+.comic-row-scroll::-webkit-scrollbar-track {
+  background: rgba(0,0,0,0.1);
+}
+
+.comic-row-scroll .col {
+  flex: 0 0 auto;
+}
+
+.marvel-card {
+  flex: 0 0 auto;
+  width: 220px;
+  border-radius: 8px;
+  box-shadow: 5px 5px #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.marvel-card:hover {
+  transform: scale(1.05);
+  box-shadow: 8px 8px #000;
+}
+
+.comic-img {
+  height: 300px;
+  object-fit: cover;
+  border-bottom: 3px solid #000;
+}
+
+.comic-body {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px;
+}
+
+.buy-button {
+  flex: 1;
+  font-weight: 900;
+  font-size: 1.4rem;
+  padding: 10px 15px;
+  border: 2px solid #000;
+  background: #56b4e9;
+  color: #fff;
+  text-shadow: 2px 2px #000;
+  transition: transform 0.1s, background 0.2s;
+}
+
+.buy-button:hover {
+  background: #0072b2;
+  transform: scale(1.1);
+}
+
+.favorite-button {
+  flex: 0 0 50px;
+  font-weight: bold;
+  font-size: 1.5rem;
+  border: 2px solid #000;
+  background: #fff;
+  color: #d55e00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-shadow: 1px 1px #000;
+  transition: transform 0.1s, background 0.2s, color 0.2s;
+}
+
+.favorite-button:hover {
+  background: #d55e00;
+  color: #fff;
+  transform: scale(1.2);
+}
+
+.cart-items-container {
+  width: 60px;
+  height: 90px;
+  object-fit: cover;
+  border-radius: 4px;
+}
+
+.cart-thumbnail {
+  height: 150px;
+  object-fit: cover;
+}
+
+.cart-summary-container {
+  min-width: 300px;
+  padding: 16px;
+  border: 2px solid #000;
+  border-radius: 8px;
+  height: fit-content;
+  font-weight: bold;
+  background-color: rgba(181, 181, 181, 0.76);
+}
+
+.featured-carousel-item {
+  height: 400px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+  transition: transform 0.3s;
+}
+
+.featured-carousel-item:hover {
+  transform: scale(1.05);
+}
+
+.featured-carousel-img {
+  max-height: 100%;
+  width: auto;
+  object-fit: contain;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+.featured-carousel-overlay {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  text-shadow: #000;
+  text-decoration: solid;
+  text-decoration-color: #0d1279;
+  padding: 10px 20px;
+  border-radius: 10px;
+  text-align: center;
+  letter-spacing: 0.025cm;
+  max-width: 90%;
+  font-size: 4rem;
+}
+
+.featured-carousel-overlay h5 {
+  margin: 0 0 5px 0;
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+.featured-carousel-overlay p {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.marvel-carousel .carousel-indicators button {
+  width: 55px;
+  height: 20px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.8);
+  border: none;
+  margin: 0 8px; /* slightly more spacing between indicators */
+  transition: all 0.3s ease;
+}
+
+.marvel-carousel .carousel-indicators .active {
+  width: 55px; /* make active same width for alignment */
+  background-color: #ffffff;
+}
+
+.marvel-carousel .carousel-control-prev,
+.marvel-carousel .carousel-control-next {
+  width: 60px;
+  opacity: 0.8;
+  filter: drop-shadow(2px 2px 2px #000);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.marvel-carousel .carousel-control-prev:hover,
+.marvel-carousel .carousel-control-next:hover {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+.marvel-carousel .carousel-control-prev-icon,
+.marvel-carousel .carousel-control-next-icon {
+  width: 40px;
+  height: 40px;
+  background-size: 100% 100%;
+  filter: invert(1);
+}
+
+
+footer {
+  background-color: #6a6a6a;
+  color: white;
+  text-align: center;
+  margin-top: 20px;
+  border-top: 2px solid #ffffff;
+}
+
+.description {
+  background: linear-gradient(180deg, #f0f4c3, #e0e0e0);
+  padding: 20px;
+  font-family: 'Impact', 'Comic Sans MS', sans-serif;
+}
+
+.Series {
+  text-align: center;
+  font-size: 4rem;
+  font-weight: bold;
+  margin: 20px 0;
+  color: #333;
+  text-shadow: 2px 2px #fff;
+}
+
+.Account-Page {
+  background-color: white;
+  color: black;
+  min-height: 100vh;
+  font-family: 'Impact', 'Comic Sans MS', sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+
+.Account-Page .card {
+  background-color: #f8f9fa;
+  color: black;
+}
+
+.Account-Page .card .btn {
+  color: white;
+}
+
+.Account-Page h1,
+.Account-Page h2,
+.Account-Page p,
+.Account-Page span,
+.Account-Page li {
+  color: black !important;
+}
