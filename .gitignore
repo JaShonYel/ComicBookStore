@@ -4,7 +4,8 @@ python.env
 DBconfig.env
 config.json
 secrets.json
-
+auth0_config.json
+auth0.env
 nginx.conf
 nginx/*.conf
 

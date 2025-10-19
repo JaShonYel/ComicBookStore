@@ -7,7 +7,6 @@ import { Link } from "react-router-dom";
 const Contact: React.FC = () => {
   return (
     <div className="Account-Page d-flex flex-column min-vh-100">
-      {/* Navbar */}
       <Navbar bg="danger" variant="dark" expand="lg" className="marvel-navbar">
         <Container>
           <Navbar.Brand as={Link} to="/">The Comic Continuum</Navbar.Brand>
@@ -28,7 +27,6 @@ const Contact: React.FC = () => {
         </Container>
       </Navbar>
 
-      {/* Page Content */}
       <Container className="mt-4">
         <h1 className="page-title">Contact Us</h1>
         <Form className="mt-3">

@@ -1,8 +1,5 @@
 import DOMPurify from "dompurify";
-import { JSDOM } from "jsdom";
 
-// Node.js: create a DOM window for DOMPurify
-const window = new JSDOM("").window;
 const purify = DOMPurify(window as any);
 
 export type SanitizeOptions = {

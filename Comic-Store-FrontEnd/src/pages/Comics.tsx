@@ -8,7 +8,7 @@ interface Comic {
   title: string;
   img: string;
   description: string;
-  price: number | null;
+  price: number;
 }
 
 interface SeriesData {
@@ -24,14 +24,17 @@ const Comics: React.FC = () => {
   const [featuredComics, setFeaturedComics] = useState<Comic[]>([]);
   const [seriesComics, setSeriesComics] = useState<SeriesData[]>([]);
 
-  // Fetch Featured Comics
   const fetchFeaturedComics = async () => {
     try {
       const res = await fetch(`${API_URL}/api/comics/featured`);
       const data = await res.json();
-      const comicsArray = Array.isArray(data)
-        ? data
-        : data.results || data.comics || [];
+      const comicsArray: Comic[] = (Array.isArray(data) ? data : data.results || data.comics || []).map((c: any) => ({
+        id: String(c.id),
+        title: c.title,
+        img: c.img,
+        description: c.description || "",
+        price: c.price ?? 2.0, // always a number
+      }));
       setFeaturedComics(comicsArray);
     } catch (err) {
       console.error("Error fetching featured comics:", err);
@@ -46,12 +49,13 @@ const Comics: React.FC = () => {
         seriesList.map(async (series) => {
           const res = await fetch(`${API_URL}/api/comics?search=${series}`);
           const data = await res.json();
-
-          // Support both paginated and direct array responses
-          const comicsArray = Array.isArray(data)
-            ? data
-            : data.results || data.comics || [];
-
+          const comicsArray: Comic[] = (Array.isArray(data) ? data : data.results || data.comics || []).map((c: any) => ({
+            id: String(c.id),
+            title: c.title,
+            img: c.img,
+            description: c.description || "",
+            price: c.price ?? 2.0,
+          }));
           return { series, comics: comicsArray.slice(0, 10) };
         })
       );
@@ -66,12 +70,8 @@ const Comics: React.FC = () => {
     fetchSeriesComics();
   }, []);
 
-  const renderPrice = (price: number | null) => {
-    if (!price || price === 0) return "$2.00";
-    return `$${price.toFixed(2)}`;
-  };
+  const renderPrice = (price: number) => `$${price.toFixed(2)}`;
 
-  // Helper to chunk comics into slides of 5
   const chunkComics = (comics: Comic[], size: number): Comic[][] => {
     const result: Comic[][] = [];
     for (let i = 0; i < comics.length; i += size) {
@@ -111,15 +111,9 @@ const Comics: React.FC = () => {
                 role="button"
                 tabIndex={0}
                 onClick={() => navigate("/Description", { state: { comic } })}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") navigate("/Description", { state: { comic } });
-                }}
+                onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/Description", { state: { comic } }); }}
               >
-                <img
-                  src={comic.img}
-                  alt={comic.title}
-                  className="featured-carousel-img"
-                />
+                <img src={comic.img} alt={comic.title} className="featured-carousel-img" />
                 <div className="featured-carousel-overlay">
                   <h5>{comic.title}</h5>
                   <p>{renderPrice(comic.price)}</p>
@@ -137,14 +131,7 @@ const Comics: React.FC = () => {
               <Carousel indicators={false} interval={null}>
                 {slides.map((slide, idx) => (
                   <Carousel.Item key={idx}>
-                    <div
-                      style={{
-                        display: "flex",
-                        justifyContent: "center",
-                        gap: "1rem",
-                        flexWrap: "wrap",
-                      }}
-                    >
+                    <div style={{ display: "flex", justifyContent: "center", gap: "1rem", flexWrap: "wrap" }}>
                       {slide.map((comic) => (
                         <Card
                           key={comic.id}
@@ -161,26 +148,22 @@ const Comics: React.FC = () => {
                               aria-label={`Add ${comic.title} to cart`}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const added = addToCart(comic);
-                                if (!added) alert(`${comic.title} is already in your cart`);
+                                addToCart(comic);
                               }}
                             >
                               Add to Cart
                             </Button>
-
                             <Button
                               variant="outline-danger"
                               className="favorite-button"
                               aria-label={`Favorite ${comic.title}`}
                               onClick={(e) => {
                                 e.stopPropagation();
-                                const added = addToFavorites(comic);
-                                if (!added) alert(`${comic.title} is already in your favorites`);
+                                addToFavorites(comic);
                               }}
                             >
                               ❤
                             </Button>
-
                           </Card.Body>
                         </Card>
                       ))}

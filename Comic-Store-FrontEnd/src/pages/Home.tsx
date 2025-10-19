@@ -9,7 +9,7 @@ interface Comic {
   id: string;
   title: string;
   img: string;
-  price: number | null;
+  price: number;
 }
 
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
@@ -28,8 +28,12 @@ const Home: React.FC = () => {
     const fetchFeaturedComics = async () => {
       try {
         const res = await fetch(`${API_URL}/api/comics/featured`);
-        const data: Comic[] = await res.json();
-        setFeaturedComics(data.slice(0, 5));
+        const data = await res.json();
+        const safeData = data.map((c: any) => ({
+          ...c,
+          price: Number(c.price ?? 2.0),
+        }));
+        setFeaturedComics(safeData.slice(0, 5));
       } catch (err) {
         console.error("Error fetching featured comics:", err);
       }
@@ -45,7 +49,11 @@ const Home: React.FC = () => {
         `${API_URL}/api/comics?search=${encodeURIComponent(searchQuery)}&page=${newPage}&limit=50`
       );
       const data = await res.json();
-      setComics(data.results ?? []);
+      const safeComics = (data.results ?? []).map((c: any) => ({
+        ...c,
+        price: Number(c.price ?? 2.0),
+      }));
+      setComics(safeComics);
       setPage(data.page ?? 1);
       setTotalPages(data.totalPages ?? 1);
     } catch (error) {
@@ -61,31 +69,7 @@ const Home: React.FC = () => {
     maximumFractionDigits: 2,
   });
 
-  const extractPrice = (raw: any): number | null => {
-    if (raw == null) return null;
-
-    if (typeof raw === "number") return raw || 2.0;
-    if (typeof raw === "string") {
-      const n = Number(raw);
-      return Number.isFinite(n) ? n || 2.0 : null;
-    }
-
-    if (Array.isArray(raw)) {
-      for (const p of raw) {
-        if (p && typeof p === "object" && typeof p.price === "number") return p.price || 2.0;
-      }
-      return null;
-    }
-
-    if (typeof raw === "object" && typeof raw.price === "number") return raw.price || 2.0;
-
-    return null;
-  };
-
-  const renderPrice = (raw: any) => {
-    const p = extractPrice(raw);
-    return p == null ? "Price: N/A" : `Price: ${currencyFormatter.format(p)}`;
-  };
+  const renderPrice = (price: number) => `Price: ${currencyFormatter.format(price)}`;
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
@@ -138,7 +122,7 @@ const Home: React.FC = () => {
                 onClick={() => navigate("/Description", { state: { comic } })}
                 onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") navigate("/Description", { state: { comic } }); }}
               >
-                <img src={comic.img} alt={comic.title} className="featured-carousel-img" />
+                <img src={comic.img} alt={comic.title ? comic.title : "Featured comic cover"} className="featured-carousel-img"/>
                 <div className="featured-carousel-overlay">
                   <h5>{comic.title}</h5>
                   <p>{renderPrice(comic.price)}</p>
@@ -211,13 +195,13 @@ const Home: React.FC = () => {
                 </Card>
               ))}
             </div>
-            {renderPagination()}
+            {totalPages > 1 && renderPagination()}
           </Container>
         )}
       </div>
 
       <footer className="bg-dark text-white text-center py-3">
-        <p>© 2025 ComicStore. All rights reserved.</p>
+        <p>© 2025 ComicStore. All rights reserved. https://github.com/JaShonYel</p>
       </footer>
     </div>
   );
