@@ -33,7 +33,7 @@ const Comics: React.FC = () => {
         title: c.title,
         img: c.img,
         description: c.description || "",
-        price: c.price ?? 2.0, // always a number
+        price: c.price ?? 2.0,
       }));
       setFeaturedComics(comicsArray);
     } catch (err) {
@@ -41,7 +41,6 @@ const Comics: React.FC = () => {
     }
   };
 
-  // Fetch Comics by Series
   const fetchSeriesComics = async () => {
     const seriesList = ["Spider-Man", "X-Men", "Avengers"];
     try {

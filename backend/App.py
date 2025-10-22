@@ -124,8 +124,6 @@ def get_user_data(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# Update cart via PUT
 @app.route("/api/users/<user_id>/cart", methods=["PUT"])
 def update_cart(user_id):
     try:
@@ -142,8 +140,6 @@ def update_cart(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# Update favorites via PUT
 @app.route("/api/users/<user_id>/favorites", methods=["PUT"])
 def update_favorites(user_id):
     try:
