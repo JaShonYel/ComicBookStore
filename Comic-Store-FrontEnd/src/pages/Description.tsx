@@ -19,15 +19,13 @@ const Description: React.FC = () => {
   const navigate = useNavigate();
   const { addToCart, addToFavorites } = useStore();
 
-  const comic = state?.comic;
+  const comic = state.comic;
 
   if (!comic) {
     return (
       <Container className="mt-4">
         <h2>Comic not found</h2>
-        <Button onClick={() => navigate(-1)} aria-label="Go back">
-          Go Back
-        </Button>
+        <Button onClick={() => navigate(-1)} aria-label="Go back">Go Back</Button>
       </Container>
     );
   }
