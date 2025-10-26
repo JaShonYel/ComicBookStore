@@ -128,7 +128,7 @@ def get_user_data(user_id):
 def update_cart(user_id):
     try:
         cart = request.json.get("cart", [])
-        # Ensure all prices are floats
+        
         for item in cart:
             item["price"] = float(item.get("price", 2.0))
         users_collection.update_one(
@@ -144,7 +144,7 @@ def update_cart(user_id):
 def update_favorites(user_id):
     try:
         favorites = request.json.get("favorites", [])
-        # Ensure all prices are floats
+        
         for item in favorites:
             item["price"] = float(item.get("price", 2.0))
         users_collection.update_one(
