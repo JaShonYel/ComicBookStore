@@ -13,28 +13,40 @@ interface BackendUser {
   createdAt: string;
 }
 
+
 const Account: React.FC = () => {
   const { user, loginWithRedirect, logout, isAuthenticated, isLoading, getAccessTokenSilently } = useAuth0();
   const [backendUser, setBackendUser] = useState<BackendUser | null>(null);
+  const [canSeeBatcave, setCanSeeBatcave] = useState(false);
 
   useEffect(() => {
     const fetchBackendUser = async () => {
-      if (isAuthenticated) {
+      if (isAuthenticated && user) {
         try {
           const token = await getAccessTokenSilently();
-          const response = await axios.get("http://localhost:5000/api/users", {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+
+          const response = await axios.get(`http://localhost:5000/api/users/${user.sub}`, {
+            headers: { Authorization: `Bearer ${token}` },
           });
-          setBackendUser(response.data.user);
+          setBackendUser(response.data);
+
+          try {
+            await axios.get(`http://localhost:5000/api/Batcave/${user.sub}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+            setCanSeeBatcave(true);
+          } catch (err) {
+            setCanSeeBatcave(false);
+          }
         } catch (err) {
           console.error("Failed to fetch backend user:", err);
         }
       }
     };
+
     fetchBackendUser();
-  }, [isAuthenticated, getAccessTokenSilently]);
+  }, [isAuthenticated, getAccessTokenSilently, user]);
+  
 
   if (isLoading) return <div>Loading...</div>;
 
@@ -55,6 +67,11 @@ const Account: React.FC = () => {
               <Nav.Link as={Link} to="/cart" className="text-white">Cart</Nav.Link>
             </Nav>
             <Nav>
+              {canSeeBatcave && (
+                <Nav.Link as={Link} to="/batcave" className="text-white fw-bold">
+                  Batcave
+                </Nav.Link>
+              )}
               <Nav.Link as={Link} to="/favorites" className="text-white">Favorites</Nav.Link>
               <Nav.Link as={Link} to="/account" className="text-white">Account</Nav.Link>
             </Nav>

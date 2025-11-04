@@ -2,11 +2,12 @@ import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../WebSiteStyles.css";
 import { Navbar, Nav, Container, Button, Image } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useStore } from "../contexts/StoreContext";
 
 const Cart: React.FC = () => {
   const { cartItems, removeFromCart } = useStore();
+  const navigate = useNavigate();
 
   const subtotal = cartItems.reduce(
     (acc, item) => acc + Number(item.price ?? 2.0),
@@ -15,6 +16,10 @@ const Cart: React.FC = () => {
   const taxRate = 0.06;
   const tax = subtotal * taxRate;
   const total = subtotal + tax;
+
+  const handleCheckout = () => {
+    navigate("/about");
+  };
 
   return (
     <>
@@ -85,7 +90,7 @@ const Cart: React.FC = () => {
               <p>Subtotal: ${subtotal.toFixed(2)}</p>
               <p>Sales Tax (6%): ${tax.toFixed(2)}</p>
               <h5>Total: ${total.toFixed(2)}</h5>
-              <Button className="buy-button buy-button-small mt-3 w-100" aria-label="Proceed to Checkout">
+              <Button className="buy-button buy-button-small mt-3 w-100" aria-label="Proceed to Checkout" onClick={handleCheckout}>
                 Checkout
               </Button>
             </div>

@@ -21,6 +21,11 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [priceRange, setPriceRange] = useState("all");
+  const [category, setCategory] = useState("all");
+  const [formatType, setFormatType] = useState("all");
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [year, setYear] = useState("all");
   const { addToCart, addToFavorites } = useStore();
   const navigate = useNavigate();
 
@@ -31,7 +36,7 @@ const Home: React.FC = () => {
         const data = await res.json();
         const safeData = data.map((c: any) => ({
           ...c,
-          price: Number(c.price ?? 2.0),
+          price: c.price != null && Number(c.price) > 0 ? Number(c.price) : 2.0
         }));
         setFeaturedComics(safeData.slice(0, 5));
       } catch (err) {
@@ -46,12 +51,12 @@ const Home: React.FC = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `${API_URL}/api/comics?search=${encodeURIComponent(searchQuery)}&page=${newPage}&limit=50`
+        `${API_URL}/api/comics?search=${encodeURIComponent(searchQuery)}&page=${newPage}&limit=50&priceRange=${priceRange}&category=${category}&format=${formatType}&sortOrder=${sortOrder}${year !== "all" ? `&year=${year}` : ""}`
       );
       const data = await res.json();
       const safeComics = (data.results ?? []).map((c: any) => ({
         ...c,
-        price: Number(c.price ?? 2.0),
+        price: c.price != null && Number(c.price) > 0 ? Number(c.price) : 2.0 //with the new filter ability the price correction i was using broke so i had to make it check for nulls and $0.00 and not just nulls
       }));
       setComics(safeComics);
       setPage(data.page ?? 1);
@@ -73,11 +78,9 @@ const Home: React.FC = () => {
 
   const renderPagination = () => {
     if (totalPages <= 1) return null;
-
     const items = [];
     const startPage = Math.max(1, page - 2);
     const endPage = Math.min(totalPages, page + 2);
-
     if (page > 1) items.push(<Pagination.Prev key="prev" onClick={(e) => handleSearch(e, page - 1)} />);
     for (let i = startPage; i <= endPage; i++)
       items.push(
@@ -132,8 +135,8 @@ const Home: React.FC = () => {
           ))}
         </Carousel>
 
-        <Container className="my-4 d-flex justify-content-center">
-          <Form className="d-flex w-75" role="search" aria-label="Search comics form" onSubmit={(e) => handleSearch(e, 1)}>
+        <Container className="my-4 d-flex flex-column align-items-center">
+          <Form className="d-flex w-75 mb-3" role="search" aria-label="Search comics form" onSubmit={(e) => handleSearch(e, 1)}>
             <FormControl
               type="search"
               placeholder="Search comics by title"
@@ -146,6 +149,43 @@ const Home: React.FC = () => {
               {loading ? "Searching..." : "Search"}
             </Button>
           </Form>
+
+          <div className="d-flex flex-wrap justify-content-center gap-2 w-75">
+            <Form.Select value={priceRange} onChange={(e) => setPriceRange(e.target.value)} style={{ maxWidth: "180px" }}>
+              <option value="all">All Prices</option>
+              <option value="0-5">$0 - $5</option>
+              <option value="5-10">$5 - $10</option>
+              <option value="10-20">$10 - $20</option>
+              <option value="20+">$20+</option>
+            </Form.Select>
+
+            <Form.Select value={category} onChange={(e) => setCategory(e.target.value)} style={{ maxWidth: "180px" }}>
+              <option value="all">All Categories</option>
+              <option value="Avengers">Avengers</option>
+              <option value="X-Men">X-Men</option>
+              <option value="Spider-Man">Spider-Man</option>
+              <option value="Iron Man">Iron Man</option>
+            </Form.Select>
+
+            <Form.Select value={formatType} onChange={(e) => setFormatType(e.target.value)} style={{ maxWidth: "180px" }}>
+              <option value="all">All Formats</option>
+              <option value="Comic">Comic</option>
+              <option value="Trade Paperback">Trade Paperback</option>
+              <option value="Hardcover">Hardcover</option>
+            </Form.Select>
+
+            <Form.Select value={sortOrder} onChange={(e) => setSortOrder(e.target.value)} style={{ maxWidth: "180px" }}>
+              <option value="asc">Price: Low to High</option>
+              <option value="desc">Price: High to Low</option>
+            </Form.Select>
+
+            <Form.Select value={year} onChange={(e) => setYear(e.target.value)} style={{ maxWidth: "120px", marginRight: "8px" }}>
+              <option value="all">All Years</option>
+              {Array.from({ length: 30 }, (_, i) => 2016 - i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </Form.Select>
+          </div>
         </Container>
 
         {comics.length > 0 && (
