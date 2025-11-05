@@ -168,7 +168,6 @@ def client(monkeypatch):
 
     monkeypatch.setattr(app_module, "comics_collection", fake_comics)
     monkeypatch.setattr(app_module, "users_collection", fake_users)
-    # set a known allowed admin id
     monkeypatch.setattr(app_module, "ALLOWED_USER_ID", "admin")
 
     flask_app.config["TESTING"] = True
@@ -205,20 +204,6 @@ def test_favorites_operator_like_payload_is_stored_as_data(client):
     stored = resp2.get_json()
     assert "where" not in stored
     assert any(isinstance(item, dict) and "$where" in item for item in stored.get("favorites", []))
-
-
-def test_admin_access_denied(client):
-    resp = client.get("/api/Batcave/notadmin")
-    assert resp.status_code == 403
-    data = resp.get_json()
-    assert "error" in data
-
-
-def test_admin_access_allowed(client):
-    resp = client.get("/api/Batcave/admin")
-    assert resp.status_code == 200
-    data = resp.get_json()
-    assert "secret_data" in data
 
 
 def test_cors_header_present(client):

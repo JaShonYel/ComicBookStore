@@ -15,7 +15,16 @@ USERS_COLLECTION = os.getenv("USERS_COLLECTION", "users")
 ALLOWED_USER_ID = os.getenv("ALLOWED_USER_ID")
 
 app = Flask(__name__)
-CORS(app)
+ALLOWED_ORIGINS = os.getenv("ALLOWED_ORIGINS", "http://localhost:3000")
+ALLOWED_ORIGINS_LIST = [o.strip() for o in ALLOWED_ORIGINS.split(",") if o.strip()]
+
+CORS(
+    app,
+    resources={r"/api/*": {"origins": ALLOWED_ORIGINS_LIST}},
+    supports_credentials=True,
+    methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-Requested-With"]
+)
 
 client = MongoClient(MONGO_URI)
 db = client[DB_NAME]

@@ -108,15 +108,6 @@ const Account: React.FC = () => {
                   </Card.Body>
                 </Card>
               </Col>
-              <Col xs={12} md={6}>
-                <Card className="shadow-sm rounded p-3" style={{ backgroundColor: "#f8f9fa", color: "black" }}>
-                  <Card.Title>Account Settings</Card.Title>
-                  <Card.Text>Manage your preferences and settings.</Card.Text>
-                  <Card.Body>
-                    <Button variant="danger">Manage Settings</Button>
-                  </Card.Body>
-                </Card>
-              </Col>
             </Row>
           </>
         )}
