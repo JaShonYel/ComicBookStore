@@ -3,7 +3,8 @@ from flask_cors import CORS
 from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
-from datetime import datetime
+from datetime import datetime, timezone
+from bson.objectid import ObjectId
 
 load_dotenv("python.env")
 
@@ -202,7 +203,7 @@ def update_favorites(user_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     
-@app.route("/api/Batcave/<user_id>", methods=["GET"])
+@app.route("/api/batcave/<user_id>", methods=["GET"])
 def get_admin_page(user_id):
     try:
         if user_id != ALLOWED_USER_ID:
@@ -213,9 +214,122 @@ def get_admin_page(user_id):
             return jsonify({"error": "User not found"}), 404
 
         return jsonify({
-            "message": f"Welcome home Master Wayne, {user_id}!",
+            "message": f"Welcome home Master Wayne!",
             "secret_data": "Admin-only information here."
         })
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+def format_admin_item(doc):
+
+    try:
+        price_val = float(doc.get("price", 2.0)) if doc.get("price") is not None else extract_price(doc.get("prices"))
+    except Exception:
+        price_val = 2.0
+    return {
+        "id": str(doc.get("_id")),
+        "title": doc.get("title", ""),
+        "price": price_val,
+        "image": doc.get("image") or (doc.get("thumbnail", {}).get("path", "") + ".jpg" if doc.get("thumbnail") else "https://placedog.net/500/280"),
+        "description": doc.get("description", "")
+    }
+
+@app.route("/api/admin/inventory", methods=["GET"])
+def admin_get_inventory():
+    try:
+        items_cursor = comics_collection.find({})
+        items = [format_admin_item(d) for d in items_cursor]
+        return jsonify(items)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/admin/inventory", methods=["POST"])
+def admin_create_item():
+    try:
+        data = request.json or {}
+        doc = {
+            "title": data.get("title", "Untitled"),
+            "price": float(data.get("price", 2.0)),
+            "image": data.get("image"),
+            "description": data.get("description", ""),
+            "createdAt": datetime.now(timezone.utc)
+        }
+        res = comics_collection.insert_one(doc)
+        created = comics_collection.find_one({"_id": res.inserted_id})
+        return jsonify(format_admin_item(created))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route("/api/admin/inventory/<item_id>", methods=["PUT"])
+def admin_update_item(item_id):
+    try:
+        data = request.json or {}
+        update_fields = {}
+        if "title" in data:
+            update_fields["title"] = data["title"]
+        if "price" in data:
+            update_fields["price"] = float(data["price"]) if data["price"] is not None else None
+        if "image" in data:
+            update_fields["image"] = data["image"]
+        if "description" in data:
+            update_fields["description"] = data["description"]
+#it looks gross cuz of the trys but it works well and i dont wanna mess with it
+        query = None
+        try:
+            query = {"_id": ObjectId(item_id)}
+        except Exception:
+            try:
+                query = {"_id": item_id}
+            except Exception:
+                try:
+                    num = int(item_id)
+                    query = {"_id": num}
+                except Exception:
+                    query = {"_id": item_id}
+
+        if not update_fields:
+            return jsonify({"error": "No updatable fields provided"}), 400
+
+        result = comics_collection.update_one(query, {"$set": update_fields})
+        
+        if result.matched_count == 0:
+            return jsonify({"error": "Item not found", "matched_count": 0}), 404
+
+        updated = comics_collection.find_one(query)
+        if updated is None:
+            return jsonify({"error": "Item matched but could not be retrieved after update"}), 500
+
+        response = format_admin_item(updated)
+        if result.modified_count == 0:
+            response["_meta"] = {"matched_count": result.matched_count, "modified_count": result.modified_count}
+
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/api/admin/inventory/<item_id>", methods=["DELETE"])
+def admin_delete_item(item_id):
+#same method as before i copy and pasted it down here
+    try:
+        query = None
+        try:
+            query = {"_id": ObjectId(item_id)}
+        except Exception:
+            try:
+                query = {"_id": item_id}
+            except Exception:
+                try:
+                    num = int(item_id)
+                    query = {"_id": num}
+                except Exception:
+                    query = {"_id": item_id}
+
+        result = comics_collection.delete_one(query)
+        if result.deleted_count == 0:
+            return jsonify({"error": "Item not found"}), 404
+        return jsonify({"success": True, "deleted_count": result.deleted_count})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

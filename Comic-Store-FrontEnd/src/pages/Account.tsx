@@ -31,7 +31,7 @@ const Account: React.FC = () => {
           setBackendUser(response.data);
 
           try {
-            await axios.get(`http://localhost:5000/api/Batcave/${user.sub}`, {
+            await axios.get(`http://localhost:5000/api/batcave/${user.sub}`, {
               headers: { Authorization: `Bearer ${token}` },
             });
             setCanSeeBatcave(true);
