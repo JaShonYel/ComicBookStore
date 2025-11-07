@@ -91,7 +91,8 @@ const Home: React.FC = () => {
     if (page < totalPages) items.push(<Pagination.Next key="next" onClick={(e) => handleSearch(e, page + 1)} />);
     return <Pagination className="justify-content-center mt-4">{items}</Pagination>;
   };
-
+//asked for additional of filters so i added price range, category, format type, and year filters.
+// i did this in my movies app i made in react native so i just adapted that logic for this app and set up the backend to handle it too
   return (
     <div className="home-background d-flex flex-column min-vh-100">
       <div className="flex-grow-1">
@@ -134,7 +135,6 @@ const Home: React.FC = () => {
             </Carousel.Item>
           ))}
         </Carousel>
-
         <Container className="my-4 d-flex flex-column align-items-center">
           <Form className="d-flex w-75 mb-3" role="search" aria-label="Search comics form" onSubmit={(e) => handleSearch(e, 1)}>
             <FormControl
