@@ -1,16 +1,17 @@
 import os
 import sys
 import re
-from pathlib import Path
+import json
+import random
+
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import App as app_module
+from App import app as flask_app
+import os
 import sys
 import re
 import random
 
-import pytest
-
-sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
-import App as app_module
-from App import app as flask_app
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 import App as app_module
 from App import app as flask_app
@@ -92,7 +93,7 @@ class FakeCollection:
         return FakeCursor(self.items)
 
     def aggregate(self, pipeline):
-
+        # support only sample stage
         for stage in pipeline:
             if "$sample" in stage:
                 size = stage["$sample"].get("size", 1)

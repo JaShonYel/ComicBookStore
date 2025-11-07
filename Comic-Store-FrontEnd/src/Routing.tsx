@@ -11,7 +11,6 @@ import Account from "./pages/Account";
 import Favorites from "./pages/Favorites";
 import Description from "./pages/Description";
 import { StoreProvider } from "./contexts/StoreContext";
-import Batcave from "./pages/Batcave";
 
 const App: React.FC = () => {
   const domain = process.env.REACT_APP_AUTH0_DOMAIN!;
@@ -38,7 +37,6 @@ const App: React.FC = () => {
             <Route path="/account" element={<Account />} />
             <Route path="/favorites" element={<Favorites />} />
             <Route path="/description" element={<Description />} />
-              <Route path="/batcave" element={<Batcave />} />
           </Routes>
         </Router>
       </StoreProvider>
